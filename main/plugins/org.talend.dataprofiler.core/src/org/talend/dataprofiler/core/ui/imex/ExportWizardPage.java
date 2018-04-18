@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -63,12 +62,10 @@ import org.talend.dataquality.indicators.definition.IndicatorDefinition;
 import org.talend.dq.helper.EObjectHelper;
 import org.talend.dq.helper.PropertyHelper;
 import org.talend.dq.helper.ReportFileHelper;
-import org.talend.dq.helper.RepositoryNodeComparator;
 import org.talend.dq.helper.RepositoryNodeHelper;
 import org.talend.dq.helper.resourcehelper.IndicatorResourceFileHelper;
 import org.talend.dq.indicators.definitions.DefinitionHandler;
 import org.talend.dq.nodes.DQFolderRepNode;
-import org.talend.dq.nodes.DQRepositoryNode;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
@@ -324,7 +321,8 @@ public class ExportWizardPage extends WizardPage {
                     boolean checked = item.getChecked();
                     if (checked) {
                         for (File file : record.getDependencySet()) {
-                            // ADD msjian TDQ-12245: for the reference project file which is depended on by the main items, we
+                            // ADD msjian TDQ-12245: for the reference project file which is depended on by the main
+                            // items, we
                             // ignore it(means not export it).
                             if (!DqFileUtils.isLocalProjectFile(file)) {
                                 continue;
@@ -408,8 +406,10 @@ public class ExportWizardPage extends WizardPage {
                     // MOD qiongli 2012-12-13 TDQ-5356 use itself file name for jrxml
                     boolean isJrxmlDepFile = depFile.getName().endsWith(FactoriesUtil.JRXML);
                     // MOD msjian TDQ-5909: modify to displayName
-                    String dptLabel = element != null && !isJrxmlDepFile && PropertyHelper.getProperty(element) != null ? PropertyHelper
-                            .getProperty(element).getDisplayName() : depFile.getName();
+                    String dptLabel =
+                            element != null && !isJrxmlDepFile && PropertyHelper.getProperty(element) != null ? PropertyHelper
+                                    .getProperty(element)
+                                    .getDisplayName() : depFile.getName();
                     // TDQ-5909~
                     errors.add("\"" + record.getName() + "\" miss dependency : " + dptLabel);//$NON-NLS-1$ //$NON-NLS-2$ 
                 }
@@ -458,18 +458,6 @@ public class ExportWizardPage extends WizardPage {
             }
             repositoryTree.setCheckedElements(selectedItemRecords.toArray());
         }
-
-        // show the same order with repository tree
-        repositoryTree.setComparator(new ViewerComparator() {
-
-            @Override
-            public int compare(Viewer iviewer, Object o1, Object o2) {
-                DQRepositoryNode recursiveFind = RepositoryNodeHelper.recursiveFind(((ItemRecord) o1).getElement());
-                DQRepositoryNode recursiveFind2 = RepositoryNodeHelper.recursiveFind(((ItemRecord) o2).getElement());
-                return new RepositoryNodeComparator().compare(recursiveFind, recursiveFind2);
-            }
-        });
-        // TDQ-14573~
 
         createUtilityButtons(treeComposite);
     }
@@ -581,7 +569,8 @@ public class ExportWizardPage extends WizardPage {
                 ItemRecord[] records = getElements();
                 for (ItemRecord record : records) {
                     for (File depFile : record.getDependencySet()) {
-                        // ADD msjian TDQ-12245: for the reference project file which is depended on by the main items, we
+                        // ADD msjian TDQ-12245: for the reference project file which is depended on by the main items,
+                        // we
                         // ignore it(means not export it).
                         if (!DqFileUtils.isLocalProjectFile(depFile)) {
                             continue;
@@ -688,10 +677,11 @@ public class ExportWizardPage extends WizardPage {
                         ModelElement element = record.getElement();
                         if (element != null && element instanceof IndicatorDefinition
                                 && meanIndicatorUuid.equals(ResourceHelper.getUUID(element))) {
-                            IndicatorDefinition sumIndicator = DefinitionHandler.getInstance().getIndicatorDefinition(
-                                    sumIndicatorLabel);
+                            IndicatorDefinition sumIndicator =
+                                    DefinitionHandler.getInstance().getIndicatorDefinition(sumIndicatorLabel);
                             if (sumIndicator != null) {
-                                IFile sumIndicatorIFile = IndicatorResourceFileHelper.findCorrespondingFile(sumIndicator);
+                                IFile sumIndicatorIFile =
+                                        IndicatorResourceFileHelper.findCorrespondingFile(sumIndicator);
                                 if (sumIndicatorIFile != null) {
                                     File sumIndicatorFile = WorkspaceUtils.ifileToFile(sumIndicatorIFile);
                                     if (sumIndicatorFile != null) {
@@ -748,8 +738,10 @@ public class ExportWizardPage extends WizardPage {
             return;
         }
         String version = record.getProperty().getVersion();
-        String nameWithoutVersion = file.getName().replaceAll(underlineStr + version, PluginConstant.EMPTY_STRING)
-                .replaceAll(PluginConstant.DOT_STRING + FactoriesUtil.JRXML, PluginConstant.EMPTY_STRING);
+        String nameWithoutVersion =
+                file.getName()
+                        .replaceAll(underlineStr + version, PluginConstant.EMPTY_STRING)
+                        .replaceAll(PluginConstant.DOT_STRING + FactoriesUtil.JRXML, PluginConstant.EMPTY_STRING);
         IFile iFile = ResourceManager.getJRXMLFolder().getFile(subrepName);
         File subRepFolder = WorkspaceUtils.ifileToFile(iFile);
         if (subRepFolder == null || !subRepFolder.exists()) {
@@ -795,7 +787,7 @@ public class ExportWizardPage extends WizardPage {
         }
         ProjectManager pManager = ProjectManager.getInstance();
         Project project = pManager.getCurrentProject().getEmfProject();
-        File outputDir = new File(lastPath + File.separator + project.getTechnicalLabel()); //$NON-NLS-1$
+        File outputDir = new File(lastPath + File.separator + project.getTechnicalLabel());
         // if the file exists,pop an dialog to ask that it will override the old file.
         if ((dirBTN.getSelection() && outputDir.exists())
                 || (archBTN.getSelection() && new File(archTxt.getText().trim()).exists())) {
